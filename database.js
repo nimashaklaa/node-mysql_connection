@@ -18,12 +18,24 @@ async function getNotes(){
 }
 
 async function getNotess(id){
-    const [rows] = await pool.query(`SELECT * from notes where id = ${id}` )
-    return rows;
+    const [rows] = await pool.query(`SELECT * from notes where id = ?`,[id] )
+    return rows[0];
+}
+
+async function createNotes(title,contents){
+    const [newNote] = await pool.query(`INSERT INTO notes(title,contents) VALUES (?,?)`,
+    [title, contents]
+    )
+    const id =newNote.insertId
+    return getNotess(id)
+
 }
 
 const notes = await getNotes();
 console.log(notes)
 
-const note = await getNotess(1);
+const note = await getNotess(100);
 console.log(note)
+
+const newNote = await(createNotes('Test','Testing code with Jest'))
+console.log(newNote)
